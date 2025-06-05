@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Agente IA Acadêmco</title>
+<link rel="stylesheet" href="/style.css?v=1.1" />
+</head>
+<body>
+  <div class="container">
+    <h1>Revisor de Trabalhos Acadêmicos</h1>
+    <form id="uploadForm">
+      <label for="file">Envie seu trabalho acadêmico (PDF):</label><br /><br />
+      <input type="file" id="file" name="file" accept="application/pdf" required /><br /><br />
+      <button type="submit">Enviar</button>
+    </form>
+    <div class="result" id="result"></div>
+    <button id="downloadBtn" style="margin-top: 10px; display: none;">Baixar Análise e Resultados em PDF</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="/script.js?v=1.1"></script>
+
+</body>
+</html>

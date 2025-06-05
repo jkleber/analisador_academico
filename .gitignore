@@ -1,0 +1,13 @@
+# Ignora módulos do Node.js
+node_modules/
+
+# Ignora arquivos de ambiente (API keys, etc.)
+.env
+
+# Ignora a pasta onde ficam os uploads de PDF
+uploads/
+
+# Ignora arquivos temporários ou de log
+*.log
+.DS_Store
+
