@@ -58,13 +58,12 @@ button:hover {
 
 .analysis-section h3 {
   color: #0056b3;
-  margin-top: 8px;
-  margin-bottom: 5px;
-  font-size: 1.4rem;
+  font-size: 1.6rem; /* ajuste se quiser maior */
   font-weight: bold;
-  display: flex;
-  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 10px;
 }
+
 
 .analysis-section p {
   margin: 8px 0;
