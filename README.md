@@ -42,6 +42,9 @@ npm install
 GEMINI_API_KEY=SUA_CHAVE_DO_GOOGLE
 ```
 
+## 📝 Nota sobre o arquivo de teste
+Este projeto exige que exista um arquivo fake de teste `test/data/05-versions-space.pdf` para evitar um erro no módulo `pdf-parse`.
+
 4️⃣ Rode o projeto:
 ```bash
 npm start

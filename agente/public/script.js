@@ -31,7 +31,8 @@ form.addEventListener('submit', async (e) => {
     if (data.success) {
       let cleanAnalysis = data.analysis
         .replace(/[#*✅]/g, '') // Remove #, *, ✅
-        .replace(/\n/g, '<br>');
+        .replace(/\n([A-Z][a-zA-Zçãéóê\s]+):/g, '<h3>$1</h3>') // Converte títulos em <h3>
+        .replace(/\n/g, '<br>'); // Converte outras quebras de linha para <br>
 
       let analysisHtml = `
         <h2>Arquivo analisado: ${currentFileName}</h2>
