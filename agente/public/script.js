@@ -17,6 +17,7 @@ form.addEventListener('submit', async (e) => {
   downloadBtn.style.display = 'none';
 
   try {
+    // 🚀 Agora usando o servidor real!
     const response = await fetch(`${backendUrl}/api/analysis/upload`, {
       method: 'POST',
       body: formData,
@@ -28,69 +29,63 @@ form.addEventListener('submit', async (e) => {
     }
 
     const data = await response.json();
-      if (data.success) {
-        let cleanAnalysis = data.analysis.replace(/[#*✅]/g, '');
 
-        // Regex para encontrar tópicos principais, mesmo se não estiverem sozinhos em uma linha
-        cleanAnalysis = cleanAnalysis.replace(/(Introdução:|Metodologia:|Resultados:|Discussão:|Conclusão:|Referências Bibliográficas:)/gi, '<h3>$1</h3>');
+    if (data.success) {
+      let cleanAnalysis = data.analysis
+        .replace(/[#*✅•]/g, '') // Remove símbolos
+        .replace(/^\s*[\d\.\-•]+\s*/gm, '') // Remove números e símbolos antes dos títulos
+        .replace(/(Introdução:|Metodologia:|Resultados:|Discussão:|Conclusão:|Referências Bibliográficas:)/gi, '<h3>$1</h3>') // Formata títulos
+        .split('\n')
+        .map(paragraph => paragraph.trim() ? `<p>${paragraph.trim()}</p>` : '')
+        .join('');
 
-        // Opcional: quebras de linha em <p>, para manter a estrutura de parágrafos
-        cleanAnalysis = cleanAnalysis
-          .split('\n')
-          .map(paragraph => paragraph.trim() ? `<p>${paragraph.trim()}</p>` : '')
-          .join('');
+      let analysisHtml = `
+        <h2>Arquivo analisado: ${currentFileName}</h2>
+        <div class="analysis-section-container">
+          <div class="analysis-section">${cleanAnalysis}</div>
+        </div>
+      `;
 
-        let analysisHtml = `
-          <h2>Arquivo analisado: ${currentFileName}</h2>
-          <div class="analysis-section-container">
-            <div class="analysis-section">${cleanAnalysis}</div>
-          </div>
+      let academicResultsHtml = '';
+      if (data.academicResults && data.academicResults.length > 0) {
+        academicResultsHtml = `
+          <h2>Resultados Acadêmicos</h2>
+          <ul>
+            ${data.academicResults.map(result => `
+              <li style="margin-bottom: 15px; page-break-inside: avoid;">
+                <strong>${result.source}:</strong> 
+                ${
+                  result.url
+                    ? `<a href="${result.url}" target="_blank" rel="noopener noreferrer">${result.title}</a>`
+                    : `${result.title}`
+                }
+              </li>
+            `).join('')}
+          </ul>
         `;
-
-        let academicResultsHtml = '';
-        if (data.academicResults && data.academicResults.length > 0) {
-          academicResultsHtml = `
-            <h2>Resultados Acadêmicos</h2>
-            <ul>
-              ${data.academicResults
-                .map(result => `
-                  <li style="margin-bottom: 15px; page-break-inside: avoid;">
-                    <strong>${result.source}:</strong> 
-                    ${
-                      result.url
-                        ? `<a href="${result.url}" target="_blank" rel="noopener noreferrer">${result.title}</a>`
-                        : `${result.title}`
-                    }
-                  </li>
-                `).join('')}
-            </ul>
-          `;
-        }
-
-        resultDiv.innerHTML = `
-          ${analysisHtml}
-          ${academicResultsHtml}
-        `;
-
-        downloadBtn.style.display = 'inline-block';
-        downloadBtn.onclick = () => {
-          const element = document.getElementById('result');
-
-          const opt = {
-            margin: [0.5, 0.5, 0.5, 0.5],
-            filename: `analise_${currentFileName}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, scrollY: 0, useCORS: true },
-            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: 'css' }
-          };
-
-          html2pdf().set(opt).from(element).save();
-        };
-      } else {
-        resultDiv.innerHTML = `<p>Erro: ${data.error}</p>`;
       }
 
+      resultDiv.innerHTML = `
+        ${analysisHtml}
+        ${academicResultsHtml}
+      `;
+
+      downloadBtn.style.display = 'inline-block';
+      downloadBtn.onclick = () => {
+        const element = document.getElementById('result');
+        const opt = {
+          margin: [0.5, 0.5, 0.5, 0.5],
+          filename: `analise_${currentFileName}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, scrollY: 0, useCORS: true },
+          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: 'css' }
+        };
+        html2pdf().set(opt).from(element).save();
+      };
+    } else {
+      resultDiv.innerHTML = `<p>Erro: ${data.error}</p>`;
+    }
   } catch (error) {
     resultDiv.innerHTML = `<p>Erro ao conectar ao servidor: ${error.message}</p>`;
   }
